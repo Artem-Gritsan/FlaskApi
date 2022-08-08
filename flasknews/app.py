@@ -82,9 +82,12 @@ def token_required(f):
 def create_user():
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
-    new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password, admin=True)
-    db.session.add(new_user)
-    db.session.commit()
+    try:
+        new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password, admin=False)
+        db.session.add(new_user)
+        db.session.commit()
+    except Exception as ex:
+        return jsonify({'message': f'{ex}'})
     return jsonify({'message': 'New user created'})
 @app.delete('/api/v1/user/<public_id>')
 def del_user(public_id):
