@@ -1,6 +1,5 @@
 from flask import Blueprint
-from controllers import user, post, admin
-from decorators.jwt_decorator import token_required
+from controllers import user
 
 
 users = Blueprint('user', __name__)
@@ -16,30 +15,25 @@ def login():
     return user.login()
 
 @users.get('/api/v1/user/me')
-@token_required
-def get_my_data(current_user):
-    return user.get_my_data(current_user)
+def get_my_data():
+    return user.get_my_data()
 
 
 @users.delete('/api/v1/user/me')
-@token_required
-def del_my_data(current_user):
-    return user.get_my_data(current_user)
+def del_my_data():
+    return user.get_my_data()
 
 
 @users.patch('/api/v1/user/me')
-@token_required
-def change_my_data(current_user):
-    return user.change_my_data(current_user)
+def change_my_data():
+    return user.change_my_data()
 
 
 @users.post("/api/v1/post/<post_id>/rating")
-@token_required
-def add_post_rating(current_user, post_id):
-    return user.add_post_rating(current_user, post_id)
+def add_post_rating(post_id):
+    return user.add_post_rating(post_id)
 
 
 @users.post("/api/v1/user/<public_id>/rating")
-@token_required
-def add_user_rating(current_user, public_id):
-    return user.add_user_rating(current_user, public_id)
+def add_user_rating(public_id):
+    return user.add_user_rating(public_id)

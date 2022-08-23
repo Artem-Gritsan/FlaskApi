@@ -1,21 +1,23 @@
 from flask import jsonify, request
 from db import db
 from models.post import Post, PostRating, Comment
+from decorators.jwt_decorator import token_required
+from decorators.check_admin import check_root
+from constans.http_status_codes import *
 
 
 
-
+@token_required
+@check_root
 def create_post(current_user):
-    if not current_user.admin:
-        return jsonify({'message': 'Cannot perform this function!'})
     data = request.get_json()
     if data:
         post = Post(title=data['title'], content=data['content'])
     else:
-        return jsonify({'message': 'No data found!'})
+        return jsonify({'message': 'No data found!'}), HTTP_400_BAD_REQUEST
     db.session.add(post)
     db.session.commit()
-    return jsonify({'message': 'Post has been created'})
+    return jsonify({'message': 'Post has been created'}), HTTP_201_CREATED
 
 
 
@@ -27,11 +29,11 @@ def get_post(post_id):
     data['text'] = post.content
     data['rating'] = avg_rating
     if data:
-        return jsonify({'post': data})
-    return jsonify({'messqge': 'No post founded'})
+        return jsonify({'post': data}), HTTP_200_OK
+    return jsonify({'message': 'No post found!'}), HTTP_400_BAD_REQUEST
 
 
-
+@token_required
 def add_comment(current_user, post_id):
     post = Post.query.filter_by(id=post_id).first()
     data = request.get_json()
@@ -42,7 +44,7 @@ def add_comment(current_user, post_id):
     else:
         comment = Comment(text=data['message'], post=post, author=current_user)
     comment.save()
-    return jsonify({'id': f'{comment.id}'})
+    return jsonify({'id': f'{comment.id}'}), HTTP_201_CREATED
 
 
 
@@ -68,4 +70,4 @@ def get_comment(post_id):
                     data['reply'] = recursion(comments_reply, output_reply, post_id, count)
                 output.append(data)
         return output
-    return jsonify({'comments': recursion(comments, output, post_id, count)})
+    return jsonify({'comments': recursion(comments, output, post_id, count)}), HTTP_200_OK

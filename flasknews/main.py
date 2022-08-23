@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from dotenv import load_dotenv
 from routes.admin import admins
 from routes.post import posts
@@ -11,13 +11,17 @@ load_dotenv()
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('PG_USER')}:{os.getenv('PG_PASSWORD')}@localhost/{os.getenv('DB')}"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{os.getenv('PG_USER')}:{os.getenv('PG_PASSWORD')}@db/{os.getenv('DB')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 app.register_blueprint(admins)
 app.register_blueprint(posts)
 app.register_blueprint(users)
 
+
+@app.route('/')
+def welcome():
+    return jsonify({'message': 'Hello world!'})
 
 
 
@@ -27,4 +31,4 @@ app.register_blueprint(users)
 if __name__ == '__main__':
     # db.drop_all(app=app)
     db.create_all(app=app)
-    app.run()
+    app.run(host='0.0.0.0')
