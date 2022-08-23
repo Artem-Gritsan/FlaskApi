@@ -1,3 +1,2 @@
-FLASK_ENV=development
-FLASK_APP=app
-FLASK_DEBUG=True
+FLASK_APP=main
+FLASK_DEBUG=1

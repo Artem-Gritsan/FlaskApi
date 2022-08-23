@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: first_flask_container
+    build: ../flasknews
+    command: python main.py
+    volumes:
+      - ./:/app
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
+      - .flaskenv
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+#    ports:
+#      - "5700:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${DB}
+
+volumes:
+  postgres_data:
