@@ -2,10 +2,8 @@ from functools import wraps
 from flask import request, jsonify
 import jwt, os
 from models.user import User
-from dotenv import load_dotenv
 from constans.http_status_codes import *
 
-load_dotenv()
 
 
 def token_required(f):

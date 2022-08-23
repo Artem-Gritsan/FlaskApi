@@ -1,13 +1,12 @@
 import os
 from flask import Flask, jsonify
-from dotenv import load_dotenv
 from routes.admin import admins
 from routes.post import posts
 from routes.user import users
 from db import db
 from models.user import *
 from models.post import *
-load_dotenv()
+
 
 
 app = Flask(__name__)
